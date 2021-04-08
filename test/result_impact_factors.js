@@ -5,6 +5,10 @@ describe('Get impact factors from results', () => {
 
   /** @type import('./_types').ResultService */
   const service = config.getResultService()
+  const setup = {
+    productSystem: config.exampleSystem,
+    impactMethod: config.exampleMethod
+  }
   const dispose = (result, done) => {
     service.dispose(result, err => {
       if (err) {
@@ -16,10 +20,7 @@ describe('Get impact factors from results', () => {
   }
 
   it('should get some impact results', (done) => {
-    const setup = {
-      productSystem: config.exampleSystem,
-      impactMethod: config.exampleMethod
-    }
+    
     service.calculate(setup, (err, result) => {
       if (err) {
         done(err)
@@ -28,7 +29,7 @@ describe('Get impact factors from results', () => {
 
       const impacts = service.getImpacts(result)
       let resultCount = 0
-      impacts.on('error', err => done(err))
+      impacts.on('error', done)
       impacts.on('data', _impact => {
         resultCount++
       })
@@ -40,7 +41,24 @@ describe('Get impact factors from results', () => {
   })
 
   it('should return impact factors for an indicator', (done) => {
-
-    done('not implemented')
+    service.calculate(setup, (err, result) => {
+      if (err) {
+        done(err)
+        return
+      }
+      const factors = service.getImpactFactors({
+        result: result,
+        indicator: config.exampleImpact,
+      })
+      let factorCount = 0
+      factors.on('error', done)
+      factors.on('data', _factor => {
+        factorCount++
+      })
+      factors.on('end', () => {
+        assert.ok(factorCount > 0)
+        dispose(result, done)
+      })
+    })
   })
 })
