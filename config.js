@@ -3,11 +3,15 @@ const grpc = require('@grpc/grpc-js')
 
 const URL = 'localhost:8080'
 
-const EXAMPLE_SYSTEM_REF = {
+exports.exampleSystem = {
   id: '66344e38-411a-4996-8062-e92dd3cd211c'
 }
-
-const protoDir = `${__dirname}/protos`
+exports.exampleMethod = {
+  id: '9a597be4-ce40-4acd-9ace-ca8edebce13f'
+}
+exports.exampleImpact = {
+  id: '8a1d63db-3f8b-415f-841d-5dc1d2d5fd59'
+}
 
 let _resultService = null;
 exports.getResultService = () => {
