@@ -17,6 +17,13 @@ export interface ImpactResult {
   value: number;
 }
 
+export interface FlowResult {
+  flow: Ref;
+  input: boolean;
+  value: number;
+  location?: Ref;
+}
+
 export interface ImpactFactorRequest {
   result: Result;
   indicator?: Ref;
@@ -37,6 +44,8 @@ export interface CalculationSetup {
 export interface ResultService {
 
   calculate: (setup: CalculationSetup, resp: Response<Result>) => void;
+
+  getInventory: (result: Result) => StreamResponse<FlowResult>;
 
   getImpacts: (result: Result) => StreamResponse<ImpactResult>;
 

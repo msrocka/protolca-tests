@@ -10,13 +10,34 @@ describe('Test basic calculation', () => {
     productSystem: config.exampleSystem,
     impactMethod: config.exampleMethod
   }
-
-  it('should get a result', async () => {
+  const withResult = async (fn) => {
     const result = await grpc.call(
       service, service.calculate, setup)
-    assert.ok(result.id)
+    await fn(result)
     await grpc.call(
       service, service.dispose, result)
+  }
+
+  it('should get a result', async () => {
+    await withResult(async (result) => {
+      assert.ok(result.id)
+    })
+  })
+
+  it('should get flow results', async () => {
+    await withResult(async (result) => {
+      const flowResults = await grpc.streamCall(
+        service, service.getInventory, result)
+      assert.ok(flowResults.length > 0)
+      // there should be some amounts in the results
+      let total = 0
+      for (const flowResult of flowResults) {
+        if (flowResult.value) {
+          total += Math.abs(flowResult.value)
+        }
+      }
+      assert.ok(total > 0)
+    })
   })
 
   it('should get an error', done => {

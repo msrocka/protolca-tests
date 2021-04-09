@@ -12,6 +12,9 @@ exports.exampleMethod = {
 exports.exampleImpact = {
   id: '8a1d63db-3f8b-415f-841d-5dc1d2d5fd59'
 }
+exports.exampleFlow = {
+  id: '77e416eb-a363-4258-a04e-171d843a6460'
+}
 
 let _resultService = null;
 exports.getResultService = () => {
