@@ -1,5 +1,6 @@
 const assert = require('assert')
 const config = require('../config')
+const grpc = require('./_grpc')
 
 describe('Test basic calculation', () => {
 
@@ -11,15 +12,15 @@ describe('Test basic calculation', () => {
   }
 
   it('should get a result', async () => {
-    const result = await config.call(
+    const result = await grpc.call(
       service, service.calculate, setup)
     assert.ok(result.id)
-    await config.call(
+    await grpc.call(
       service, service.dispose, result)
   })
 
   it('should get an error', done => {
-    config.call(service, service.calculate, {
+    grpc.call(service, service.calculate, {
       productSystem: { id: 'does-not-exist' }
     }).then(data => {
       done('unexpected data ' + data)

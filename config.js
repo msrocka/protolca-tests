@@ -29,15 +29,3 @@ function loadProto(proto) {
   const protos = loader.loadSync(fullPath, { enums: String })
   return grpc.loadPackageDefinition(protos)
 }
-
-exports.call = (service, fn, message) => {
-  return new Promise((resolve, reject) => {
-    fn.call(service, message, (err, val) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(val)
-      }
-    })
-  })
-}
