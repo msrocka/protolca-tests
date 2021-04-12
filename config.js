@@ -27,6 +27,17 @@ exports.getResultService = () => {
   return _resultService
 }
 
+let _dataService = null;
+exports.getDataService = () => {
+  if (_dataService) {
+    return _dataService
+  }
+  const p = loadProto('services')
+  _dataService = new p.protolca.services.DataService(
+    URL, grpc.credentials.createInsecure())
+  return _dataService
+}
+
 function loadProto(proto) {
   const fullPath = `${__dirname}/protos/${proto}.proto`
   const protos = loader.loadSync(fullPath, { enums: String })
