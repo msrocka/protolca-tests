@@ -1,32 +1,18 @@
 const assert = require('assert')
 const config = require('../config')
-const grpc = require('./_grpc')
+const util = require('./util')
 
 describe('Test basic calculation', () => {
 
-  /** @type import('./_types').ResultService */
-  const service = config.getResultService()
-  const setup = {
-    productSystem: config.exampleSystem,
-    impactMethod: config.exampleMethod
-  }
-  const withResult = async (fn) => {
-    const result = await grpc.call(
-      service, service.calculate, setup)
-    await fn(result)
-    await grpc.call(
-      service, service.dispose, result)
-  }
-
   it('should get a result', async () => {
-    await withResult(async (result) => {
+    await util.withResult(async (_, result) => {
       assert.ok(result.id)
     })
   })
 
   it('should get flow results', async () => {
-    await withResult(async (result) => {
-      const flowResults = await grpc.streamCall(
+    await util.withResult(async (service, result) => {
+      const flowResults = await util.streamCall(
         service, service.getInventory, result)
       assert.ok(flowResults.length > 0)
       // there should be some amounts in the results
@@ -41,7 +27,8 @@ describe('Test basic calculation', () => {
   })
 
   it('should get an error', done => {
-    grpc.call(service, service.calculate, {
+    const service = config.getResultService()
+    util.call(service, service.calculate, {
       productSystem: { id: 'does-not-exist' }
     }).then(data => {
       done('unexpected data ' + data)

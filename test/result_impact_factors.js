@@ -1,27 +1,13 @@
 const assert = require('assert')
 const config = require('../config')
-const grpc = require('./_grpc')
+const util = require('./util')
 
 describe('Get impact factors from results', () => {
 
-  /** @type import('./_types').ResultService */
-  const service = config.getResultService()
-  const setup = {
-    productSystem: config.exampleSystem,
-    impactMethod: config.exampleMethod
-  }
-  const withResult = async (fn) => {
-    const result = await grpc.call(
-      service, service.calculate, setup)
-    await fn(result)
-    await grpc.call(
-      service, service.dispose, result)
-  }
-
   it('should get some impact results', async () => {
 
-    await withResult(async (result) => {
-      const impacts = await grpc.streamCall(
+    await util.withResult(async (service, result) => {
+      const impacts = await util.streamCall(
         service, service.getImpacts, result)
       assert.ok(impacts.length > 0)
     })
@@ -30,8 +16,8 @@ describe('Get impact factors from results', () => {
 
   it('should return impact factors for an indicator', async () => {
 
-    await withResult(async (result) => {
-      const factors = await grpc.streamCall(
+    await util.withResult(async (service, result) => {
+      const factors = await util.streamCall(
         service, service.getImpactFactors, {
         result: result,
         indicator: config.exampleImpact,
